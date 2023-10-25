@@ -93,7 +93,7 @@ class Classifier(custom_model.CustomModel):
             self._model.load_weights(latest_checkpoint)
 
         best_ckpt_callback = tf.keras.callbacks.ModelCheckpoint(
-            filepath=os.path.join(checkpoint_path, "weights" + "epoch{epoch}"), monitor="loss", save_best_only=True, verbose=1
+            filepath=os.path.join(checkpoint_path, "weights" + "epoch{epoch}"), monitor="total_loss", save_best_only=True, verbose=1
         )
 
         self._history = self._model.fit(
