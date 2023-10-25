@@ -92,6 +92,10 @@ class Classifier(custom_model.CustomModel):
             print(f"Resuming from {latest_checkpoint}")
             self._model.load_weights(latest_checkpoint)
 
+        best_ckpt_callback = tf.keras.callbacks.ModelCheckpoint(
+            filepath=os.path.join(checkpoint_path, "weights" + "epoch{epoch}"), monitor="loss", save_best_only=True, verbose=1
+        )
+
         self._history = self._model.fit(
             x=train_dataset,
             epochs=self._hparams.epochs,
@@ -100,7 +104,7 @@ class Classifier(custom_model.CustomModel):
             # dataset is exhausted even if there are epochs remaining.
             steps_per_epoch=None,
             validation_data=validation_dataset,
-            callbacks=[DVCLiveCallback()],
+            callbacks=[DVCLiveCallback(), best_ckpt_callback],
             class_weight=self._hparams.class_weights,
         )
 
