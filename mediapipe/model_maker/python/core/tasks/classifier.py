@@ -93,7 +93,7 @@ class Classifier(custom_model.CustomModel):
             self._model.load_weights(latest_checkpoint)
 
         best_ckpt_callback = tf.keras.callbacks.ModelCheckpoint(
-            filepath=os.path.join(checkpoint_path, "keras_model"), monitor="total_loss", save_best_only=True, verbose=1
+            filepath=os.path.join(checkpoint_path, "keras_model"), monitor="total_loss", save_best_only=True, save_weights_only=True, verbose=1
         )
 
         self._history = self._model.fit(
@@ -107,6 +107,9 @@ class Classifier(custom_model.CustomModel):
             callbacks=[DVCLiveCallback(), best_ckpt_callback],
             class_weight=self._hparams.class_weights,
         )
+
+        print("Using the best checkpoint...")
+        self._model.load_weights(os.path.join(checkpoint_path, "keras_model"))
 
     def evaluate(self, data: dataset.Dataset, batch_size: int = 32) -> Any:
         """Evaluates the classifier with the provided evaluation dataset.
