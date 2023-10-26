@@ -106,6 +106,9 @@ class ObjectDetector(classifier.Classifier):
             - float_ckpt.data-00000-of-00001
             - float_ckpt.index
         """
+
+        print("using best weights for creating float checkpoint")
+        self._model.load_weights(os.path.join(self._hparams.export_dir, "keras_model"))
         save_path = os.path.join(self._hparams.export_dir, "float_ckpt")
         if not os.path.exists(self._hparams.export_dir):
             os.makedirs(self._hparams.export_dir)
@@ -256,6 +259,8 @@ class ObjectDetector(classifier.Classifier):
         metadata_file = os.path.join(self._hparams.export_dir, "metadata.json")
         with tempfile.TemporaryDirectory() as temp_dir:
             save_path = os.path.join(temp_dir, "saved_model")
+            print("using best weights for exporting model")
+            self._model.load_weights(os.path.join(self._hparams.export_dir, "keras_model"))
             self._model.export_saved_model(save_path)
             converter = tf.lite.TFLiteConverter.from_saved_model(save_path)
             if quantization_config:
